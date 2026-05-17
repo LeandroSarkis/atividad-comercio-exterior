@@ -27,7 +27,7 @@ Dê duplo-clique em `rodar_app.bat`.
 
 ```bash
 # 1. Instalar dependências
-pip install flet numpy pandas
+pip install flet
 
 # 2. Executar
 python main.py
@@ -41,7 +41,7 @@ chmod +x build.sh
 ./build.sh
 
 # Windows – via pip
-pip install flet numpy pandas pyinstaller
+pip install flet pyinstaller
 flet pack main.py --name AppComex
 # Executável gerado em: dist/AppComex (ou dist/AppComex.exe)
 ```
@@ -72,8 +72,6 @@ a reforma tributária vigente.
 | Biblioteca | Uso |
 |-----------|-----|
 | **Flet**  | Interface gráfica multiplataforma |
-| **NumPy** | Soma vetorial dos custos |
-| **Pandas**| Estruturação dos dados de resultado |
 
 ---
 
