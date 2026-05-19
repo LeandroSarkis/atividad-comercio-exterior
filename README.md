@@ -1,50 +1,49 @@
 # App Comex – Cálculo de Preço de Exportação
 
-Projeto acadêmico desenvolvido para a disciplina **Comércio Exterior**  
-CESUPA – Engenharia da Computação | Maio 2026
+Projeto acadêmico desenvolvido para a disciplina **Comércio Exterior** CESUPA – Engenharia da Computação | Maio 2026
 
 ---
 
 ## 📋 Funcionalidades
 
-- Cadastro básico da mercadoria (nome, NCM, preço interno, câmbio)
-- Configuração de tributos **CBS** e **IBS** (alíquotas configuráveis)
-- Inserção de créditos tributários recuperáveis (desoneração)
-- Inserção de custos logísticos (embalagem, frete, desembaraço, seguro, outros)
-- Seleção do **Incoterm** com descrição automática
-- Cálculo automático de **FOB** e **CIF/CPT** em BRL e USD
-- Lucro estimado e margem percentual
-- Resumo completo da exportação
+- Interface em formato *Stepper* (passo a passo) fluida e intuitiva.
+- Cadastro básico da mercadoria (nome, NCM, preço interno, câmbio).
+- Configuração de tributos **CBS** e **IBS** (alíquotas configuráveis pós-reforma).
+- Inserção de créditos tributários recuperáveis (desoneração da exportação).
+- Inserção de custos logísticos internos (embalagem, frete, desembaraço, seguro, outros).
+- Seleção dinâmica de **Incoterm** com atualização de regras de frete/seguro em tempo real.
+- Sistema de validação de dados blindado contra caracteres inválidos (suporta `1.500,00` ou `1500.00`).
+- Cálculo automático de **FOB** e **CIF/CPT** em BRL e USD.
+- Exibição de lucro estimado e margem percentual com cards de destaque visual.
 
 ---
 
-## 🚀 Como rodar
+## 🚀 Como rodar o projeto
 
-### Opção 1 – Script rápido (Windows)
-Dê duplo-clique em `rodar_app.bat`.
+### Opção 1 – Executar o Código Fonte (Desenvolvimento)
 
-### Opção 2 – Manual (Windows / Linux / macOS)
-
-```bash
-# 1. Instalar dependências
-pip install flet
-
-# 2. Executar
-python main.py
-```
-
-### Opção 3 – Gerar executável standalone
+Certifique-se de ter o Python 3 instalado na sua máquina.
 
 ```bash
-# Linux/macOS
-chmod +x build.sh
-./build.sh
+# 1. Instalar a versão recomendada do Flet
+pip install flet  # no Mac/Linux use: python3 -m pip install flet
 
-# Windows – via pip
-pip install flet pyinstaller
-flet pack main.py --name AppComex
-# Executável gerado em: dist/AppComex (ou dist/AppComex.exe)
+# 2. Executar o aplicativo
+python main.py    # no Mac/Linux use: python3 main.py
 ```
+
+### Opção 2 – Gerar executável standalone (.exe ou .app)
+
+Para distribuir o aplicativo como um programa nativo sem precisar do Python instalado:
+
+```bash
+# 1. Instalar as ferramentas de empacotamento
+pip install pyinstaller flet
+
+# 2. Gerar o executável nativo
+flet pack main.py --name "AppComex"
+```
+O resultado será gerado dentro da pasta dist/ na raiz do projeto.
 
 ---
 
@@ -71,7 +70,8 @@ a reforma tributária vigente.
 
 | Biblioteca | Uso |
 |-----------|-----|
-| **Flet**  | Interface gráfica multiplataforma |
+|**Python Nativo** | Lógica de cálculo otimizada e sem dependências pesadas |
+| **Flet (v0.85+)**  | Interface gráfica multiplataforma moderna baseada em Flutter |
 
 ---
 
