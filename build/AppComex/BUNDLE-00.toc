@@ -1,0 +1,3 @@
+([('AppComex',
+   '/Users/enzokikuchi/Downloads/comex_app/dist/AppComex',
+   'EXECUTABLE')],)
