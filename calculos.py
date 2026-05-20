@@ -86,7 +86,9 @@ def calcular_exportacao_CIF(dados):
     lucro_interno        = to_float(dados.get("lucro_interno", 0)) / 100
     credito_rec          = to_float(dados.get("credito_rec", 0))
     embalagem_interna    = to_float(dados.get("embalagem_interna", 0))
-    frete_internacional   = to_float(dados.get("frete_internacional", 0))
+    
+    # Custos internacionais específicos do CIF
+    frete_internacional  = to_float(dados.get("frete_internacional", 0))
     seguro_internacional = to_float(dados.get("seguro_internacional", 0))
     
     custo_exportacao     = to_float(dados.get("custo_exportacao", 0))
@@ -94,35 +96,32 @@ def calcular_exportacao_CIF(dados):
     lucro_exportacao     = to_float(dados.get("lucro_exportacao", 0)) / 100
     outros_custos        = to_float(dados.get("outros_custos", 0))
     taxa_cambio          = to_float(dados.get("taxa_cambio", 1))
-    incoterm_key         = dados.get("incoterm", "FOB – Free On Board")
+    incoterm_key         = dados.get("incoterm", "CIF – Cost, Insurance and Freight")
 
     # 2. Desfazendo o Preço do Mercado Interno (Retrocesso)
-    
-    # Remove a alíquota CBS/IBS por dentro (Ex: R$ 122 com 22% de imposto vira R$ 100)
     preco_sem_imposto = preco_mercado / (1 + aliquota_cbs_ibs) if aliquota_cbs_ibs >= 0 else preco_mercado
-    
-    # Remove a margem de lucro interna para descobrir o custo base do produto
-    # Formato "Margem sobre o Preço de Venda" (Ex: se o lucro é 20%, o custo representa 80% do preço)
     custo_base_interno = preco_sem_imposto * (1 - lucro_interno)
 
-    # 3. Ajustes de Exportação (Subtrai o que não vai gastar e os créditos que vai ganhar)
+    # 3. Ajustes de Exportação (Subtrai custos internos não utilizados e créditos)
     subtotal1 = custo_base_interno - (credito_rec + embalagem_interna)
 
-    # 4. Adiciona os novos custos logísticos da exportação
+    # 4. Adiciona os custos logísticos nacionais da exportação (Até o porto de origem)
     custos_exportacao_totais = float(sum([custo_exportacao, embalagem_exportacao, outros_custos]))
     fob_brl_custo = subtotal1 + custos_exportacao_totais
 
-    # 5. Aplica a nova margem de lucro de exportação (Margem sobre o Preço de Venda)
-    # Se o lucro desejado for 15%, dividimos o custo por 0.85 para embutir o lucro corretamente
+    # 5. Aplica a nova margem de lucro de exportação sobre a base FOB
     if lucro_exportacao < 1:
         fob_brl_venda = fob_brl_custo / (1 - lucro_exportacao)
     else:
-        fob_brl_venda = fob_brl_custo  # Evita divisão por zero ou números negativos se o lucro for >= 100%
+        fob_brl_venda = fob_brl_custo
     
-    fob_brl_venda = fob_brl_venda - (frete_internacional + seguro_internacional)  # Subtrai os custos que já estão inclusos no preço CIF
+    # CORREÇÃO CRÍTICA PARA CIF:
+    # O frete e o seguro internacional DEVEM SER SOMADOS ao preço FOB para formar o preço CIF.
+    # Assim, o cliente te paga esse valor e você repassa para os prestadores de serviço.
+    cif_brl_venda = fob_brl_venda + frete_internacional + seguro_internacional
     
-    # 6. Conversão Cambial para Dólar
-    fob_usd = fob_brl_venda / taxa_cambio if taxa_cambio > 0 else 0
+    # 6. Conversão Cambial para Dólar (do valor total CIF)
+    cif_usd = cif_brl_venda / taxa_cambio if taxa_cambio > 0 else 0
 
     # 7. Retorno dos dados calculados
     return {
@@ -136,8 +135,9 @@ def calcular_exportacao_CIF(dados):
         "lucro_exportacao": lucro_exportacao,
         "frete_internacional": frete_internacional,
         "seguro_internacional": seguro_internacional,
-        "fob_brl": round(fob_brl_venda, 2),  # Preço de venda final em R$
-        "fob_usd": round(fob_usd, 2),        # Preço de venda final em US$
+        "fob_brl": round(fob_brl_venda, 2),  # Mantive caso queira saber o valor antes do frete/seguro
+        "cif_brl": round(cif_brl_venda, 2),  # Preço de venda final CIF em R$
+        "cif_usd": round(cif_usd, 2),        # Preço de venda final CIF em US$
         "taxa_cambio": taxa_cambio,
         "incoterm": incoterm_key,
     }
