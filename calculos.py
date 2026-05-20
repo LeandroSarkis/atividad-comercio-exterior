@@ -24,54 +24,44 @@ def to_float(v):
 
 def calcular_exportacao(dados):
     preco_mercado  = to_float(dados.get("preco_mercado", 0))
-    cbs_pct        = to_float(dados.get("cbs_pct", 0)) / 100
-    ibs_pct        = to_float(dados.get("ibs_pct", 0)) / 100
+    aliquota_cbs_ibs = to_float(dados.get("aliquota", 0)) / 100
+    lucro_interno = to_float(dados.get("lucro_interno", 0)) / 100
     credito_rec    = to_float(dados.get("credito_rec", 0))
-    embalagem      = to_float(dados.get("embalagem", 0))
-    frete_interno  = to_float(dados.get("frete_interno", 0))
-    desembaraco    = to_float(dados.get("desembaraco", 0))
-    seguro_interno = to_float(dados.get("seguro_interno", 0))
+    embalagem_interna      = to_float(dados.get("embalagem_interna", 0))
+    custo_exportacao  = to_float(dados.get("custo_exportacao", 0))
+    embalagem_exportacao      = to_float(dados.get("embalagem_exportacao", 0))
+    lucro_exportacao     = to_float(dados.get("lucro_exportacao", 0)) / 100
     outros_custos  = to_float(dados.get("outros_custos", 0))
     taxa_cambio    = to_float(dados.get("taxa_cambio", 1))
     incoterm_key   = dados.get("incoterm", "FOB – Free On Board")
-    frete_intl     = to_float(dados.get("frete_intl", 0))
-    seguro_intl    = to_float(dados.get("seguro_intl", 0))
 
     cfg = INCOTERMS.get(incoterm_key, {"frete_intl": False, "seguro": False})
 
-    valor_cbs      = preco_mercado * cbs_pct
-    valor_ibs      = preco_mercado * ibs_pct
-    total_tributos = valor_cbs + valor_ibs
+    mercado_interno_sem_aliquotas = (preco_mercado * aliquota_cbs_ibs) / (1 + aliquota_cbs_ibs)
 
-    custos_internos = float(sum([embalagem, frete_interno, desembaraco, seguro_interno, outros_custos]))
+    mercado_interno_sem_lucro = mercado_interno_sem_aliquotas / lucro_interno
 
-    fob_brl = preco_mercado - credito_rec + custos_internos
-    fob_usd = fob_brl / taxa_cambio if taxa_cambio else 0
+    subtotal1 = mercado_interno_sem_lucro - (credito_rec + embalagem_interna)
 
-    fi = frete_intl if cfg["frete_intl"] else 0.0
-    si = seguro_intl if cfg["seguro"]    else 0.0
+    custos_internos = float(sum([custo_exportacao, embalagem_exportacao, outros_custos]))
 
-    cif_brl = fob_brl + fi + si
-    cif_usd = cif_brl / taxa_cambio if taxa_cambio else 0
+    fob_brl = subtotal1 + custos_internos
 
-    lucro_brl  = fob_brl - preco_mercado
-    margem_pct = (lucro_brl / fob_brl * 100) if fob_brl else 0
+    fob_brl_exportacao = fob_brl / lucro_exportacao if lucro_exportacao else 0
+    
+    fob_usd = fob_brl_exportacao / taxa_cambio if taxa_cambio else 0
 
     return {
         "preco_mercado":   preco_mercado,
-        "valor_cbs":       valor_cbs,
-        "valor_ibs":       valor_ibs,
-        "total_tributos":  total_tributos,
+        "aliquota_cbs_ibs": aliquota_cbs_ibs,
+        "lucro_interno":   lucro_interno,
         "credito_rec":     credito_rec,
-        "custos_internos": custos_internos,
+        "embalagem_interna": embalagem_interna,
+        "custo_exportacao": custo_exportacao,
+        "embalagem_exportacao": embalagem_exportacao,
+        "lucro_exportacao": lucro_exportacao,
         "fob_brl":   fob_brl,
         "fob_usd":   fob_usd,
-        "fi":        fi,
-        "si":        si,
-        "cif_brl":   cif_brl,
-        "cif_usd":   cif_usd,
-        "lucro_brl":   lucro_brl,
-        "margem_pct":  margem_pct,
         "taxa_cambio": taxa_cambio,
         "incoterm":    incoterm_key,
     }
