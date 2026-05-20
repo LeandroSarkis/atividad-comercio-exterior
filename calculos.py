@@ -1,14 +1,14 @@
 # calculos.py
 
 INCOTERMS = {
-    "EXW – Ex Works":                    {"frete_intl": False, "seguro": False},
+    #"EXW – Ex Works":                    {"frete_intl": False, "seguro": False},
     "FOB – Free On Board":               {"frete_intl": False, "seguro": False},
-    "CFR – Cost and Freight":            {"frete_intl": True,  "seguro": False},
+    #"CFR – Cost and Freight":            {"frete_intl": True,  "seguro": False},
     "CIF – Cost, Insurance & Freight":   {"frete_intl": True,  "seguro": True},
-    "CPT – Carriage Paid To":            {"frete_intl": True,  "seguro": False},
-    "CIP – Carriage and Insurance Paid": {"frete_intl": True,  "seguro": True},
-    "DAP – Delivered At Place":          {"frete_intl": True,  "seguro": True},
-    "DDP – Delivered Duty Paid":         {"frete_intl": True,  "seguro": True},
+    #"CPT – Carriage Paid To":            {"frete_intl": True,  "seguro": False},
+    #"CIP – Carriage and Insurance Paid": {"frete_intl": True,  "seguro": True},
+    #"DAP – Delivered At Place":          {"frete_intl": True,  "seguro": True},
+    #"DDP – Delivered Duty Paid":         {"frete_intl": True,  "seguro": True},
 }
 
 def to_float(v):
