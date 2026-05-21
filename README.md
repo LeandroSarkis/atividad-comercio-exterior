@@ -57,7 +57,7 @@ CIF/CPT (R$) = FOB + Frete Internacional + Seguro Internacional
 
 FOB (USD) = FOB (R$) ÷ Taxa de Câmbio
 
-Lucro Estimado = FOB (R$) − Preço Mercado Interno
+Lucro Estimado = Receita de Exportação - Lucro Total ou FOB - Custo de Produção - Custos Internos
 ```
 
 CBS e IBS incidem sobre o preço de mercado interno.  
