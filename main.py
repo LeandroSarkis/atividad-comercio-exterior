@@ -78,7 +78,7 @@ def main(page: ft.Page):
         expand=True
     )
     btn_cif = ft.ElevatedButton(
-        content=ft.Text("CIF - Cost, Insurance"), 
+        content=ft.Text("CIF - Cost, Insurance and Freight"), 
         style=_btn_incoterm_style(False), 
         expand=True
     )
@@ -340,7 +340,7 @@ def main(page: ft.Page):
         content=ft.Row([
             ft.Container(content=ft.Icon(ft.Icons.IMPORT_EXPORT_ROUNDED, color="#FFFFFF", size=22), bgcolor=ACCENT, border_radius=10, padding=8),
             ft.Column([
-                ft.Text("", size=19, weight=ft.FontWeight.W_800, color="#FFFFFF"),
+                ft.Text("Comex APP", size=19, weight=ft.FontWeight.W_800, color="#FFFFFF"),
                 ft.Text("Simulador de Preço de Exportação", size=11, color="#90AAC4"),
             ], spacing=0, expand=True),
         ], spacing=14),
