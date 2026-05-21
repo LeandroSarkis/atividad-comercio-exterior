@@ -1,6 +1,5 @@
 import flet as ft
 
-# 1. Atualizamos a importação para puxar as novas funções do seu arquivo
 from calculos import (
     to_float, 
     calcular_exportacao_FOB, 
@@ -8,130 +7,15 @@ from calculos import (
     fmt_brl, 
     fmt_usd
 )
+from constants import (
+    PRIMARY, ACCENT, SURFACE, CARD_BG, TEXT_MAIN, TEXT_SUB, TEXT_DIS, 
+    ERROR_CLR, BORDER, BORDER_DIS, MUTED_BG, INCOTERM_CONFIG
+)
+from components import (
+    mk_field, mk_text_field, secao_titulo, chip_info, mk_card, 
+    resultado_card, linha_res
+)
 
-# ── Paleta ───────────────────────────────────────────────────────────────────
-PRIMARY   = "#0D1F35"
-ACCENT    = "#1AAB6D"
-SURFACE   = "#EEF2F7"
-CARD_BG   = "#FFFFFF"
-TEXT_MAIN = "#0D1F35"
-TEXT_SUB  = "#556070"
-TEXT_DIS  = "#A0AABB"
-ERROR_CLR = "#D32F2F"
-BORDER    = "#CBD5E1"
-BORDER_DIS= "#E8ECF2"
-MUTED_BG  = "#F8FAFC"
-
-INCOTERM_CONFIG = {
-    "FOB – Free On Board": {
-        "descricao": "Vendedor entrega a bordo do navio. Frete e seguro internacionais ficam por conta do comprador.",
-        "cif": False,
-    },
-    "CIF – Cost, Insurance and Freight": {
-        "descricao": "Vendedor arca com frete e seguro internacionais até o porto de destino.",
-        "cif": True,
-    },
-}
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
-def mk_field(label, hint="", prefix="", suffix="", value="", expand=True, disabled=False):
-    return ft.TextField(
-        label=label,
-        hint_text=hint or None,
-        hint_style=ft.TextStyle(color=TEXT_DIS) if hint else None,
-        prefix=ft.Text(prefix, color=TEXT_DIS if disabled else TEXT_SUB) if prefix else None,
-        suffix=ft.Text(suffix, color=TEXT_DIS if disabled else TEXT_SUB) if suffix else None,
-        value=value,
-        keyboard_type=ft.KeyboardType.NUMBER,
-        border_color=BORDER_DIS if disabled else BORDER,
-        focused_border_color=ACCENT,
-        disabled=disabled,
-        label_style=ft.TextStyle(color=TEXT_DIS if disabled else TEXT_SUB, size=12),
-        text_style=ft.TextStyle(
-            color=TEXT_DIS if disabled else TEXT_MAIN,
-            weight=ft.FontWeight.W_500,
-        ),
-        expand=expand,
-        bgcolor="#F2F4F8" if disabled else CARD_BG,
-        border_radius=8,
-    )
-
-def mk_text_field(label, hint="", expand=True):
-    return ft.TextField(
-        label=label,
-        hint_text=hint or None,
-        hint_style=ft.TextStyle(color=TEXT_DIS) if hint else None,
-        border_color=BORDER,
-        focused_border_color=ACCENT,
-        bgcolor=CARD_BG,
-        label_style=ft.TextStyle(color=TEXT_SUB, size=12),
-        text_style=ft.TextStyle(color=TEXT_MAIN),
-        expand=expand,
-        border_radius=8,
-    )
-
-def secao_titulo(texto, icon=None):
-    row_controls = []
-    if icon:
-        row_controls.append(ft.Icon(icon, color=ACCENT, size=16))
-    row_controls.append(
-        ft.Text(texto, size=13, weight=ft.FontWeight.W_700, color=PRIMARY)
-    )
-    return ft.Container(
-        content=ft.Row(row_controls, spacing=8),
-        padding=ft.Padding(top=8, right=0, bottom=6, left=0),
-        border=ft.Border(bottom=ft.BorderSide(1.5, ACCENT)),
-        margin=ft.Margin(top=4, bottom=4, left=0, right=0),
-    )
-
-def chip_info(texto):
-    return ft.Container(
-        content=ft.Text(texto, size=11, color=TEXT_SUB, italic=True),
-        bgcolor=MUTED_BG,
-        border=ft.Border.all(1, BORDER),
-        border_radius=6,
-        padding=ft.Padding(left=10, right=10, top=6, bottom=6),
-    )
-
-def mk_card(*controles, padding=24):
-    return ft.Container(
-        content=ft.Column(list(controles), spacing=12),
-        bgcolor=CARD_BG,
-        border_radius=14,
-        padding=padding,
-        shadow=ft.BoxShadow(
-            spread_radius=0, blur_radius=18,
-            color="#14000000", offset=ft.Offset(0, 4),
-        ),
-    )
-
-def resultado_card(label, valor, destaque=False):
-    return ft.Container(
-        content=ft.Column([
-            ft.Text(label, size=11, color=TEXT_SUB),
-            ft.Text(
-                valor,
-                size=17 if destaque else 14,
-                weight=ft.FontWeight.W_700,
-                color=ACCENT if destaque else TEXT_MAIN,
-            ),
-        ], spacing=3),
-        bgcolor="#F0FBF6" if destaque else MUTED_BG,
-        border=ft.Border.all(width=1.5, color=ACCENT if destaque else BORDER),
-        border_radius=10,
-        padding=14,
-        expand=True,
-    )
-
-def linha_res(label, valor):
-    return ft.Row([
-        ft.Text(label, size=12, color=TEXT_SUB, expand=3),
-        ft.Text(valor, size=12, color=TEXT_MAIN, weight=ft.FontWeight.W_600,
-                expand=2, text_align=ft.TextAlign.RIGHT),
-    ])
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
 def main(page: ft.Page):
     page.title   = "Comex · Preço de Exportação"
     page.bgcolor = SURFACE
@@ -301,7 +185,6 @@ def main(page: ft.Page):
         cif_brl = fob_brl + frete_val + seguro_val if is_cif else 0
         cif_usd = cif_brl / taxa if (is_cif and taxa > 0) else 0
 
-        # Lógica para mostrar apenas CIF ou apenas FOB baseada na escolha
         preco_brl_label = "Preço CIF (BRL)" if is_cif else "Preço FOB (BRL)"
         preco_usd_label = "Preço CIF (USD)" if is_cif else "Preço FOB (USD)"
         
@@ -336,14 +219,13 @@ def main(page: ft.Page):
 
             ft.Divider(color=BORDER, height=1),
 
-            # AQUI ESTÁ A MUDANÇA: Exibe apenas a linha com a variável dinâmica configurada acima
             ft.Row([
                 resultado_card(preco_brl_label, fmt_brl(preco_brl_val), destaque=True),
                 resultado_card(preco_usd_label, fmt_usd(preco_usd_val), destaque=True),
             ], spacing=10),
 
             ft.Divider(color=BORDER, height=1),
-            ft.Text("ℹ Valores estimados para fins acadêmicos.",
+            ft.Text("Valores estimados para fins acadêmicos.",
                     size=10, color=TEXT_SUB, italic=True),
         ]
         page.update()
@@ -392,65 +274,34 @@ def main(page: ft.Page):
 
     btn_ant = ft.ElevatedButton(
         content=ft.Text("← Anterior"), 
-        style=ft.ButtonStyle(
-            bgcolor=SURFACE,           
-            color=PRIMARY,
-            shape=ft.RoundedRectangleBorder(radius=8)
-        ),
+        style=ft.ButtonStyle(bgcolor=SURFACE, color=PRIMARY, shape=ft.RoundedRectangleBorder(radius=8)),
     )
     btn_prox = ft.ElevatedButton(
         content=ft.Text("Próximo →"), 
-        style=ft.ButtonStyle(
-            bgcolor=PRIMARY,         
-            color="#FFFFFF",
-            shape=ft.RoundedRectangleBorder(radius=8)
-        ),
+        style=ft.ButtonStyle(bgcolor=PRIMARY, color="#FFFFFF", shape=ft.RoundedRectangleBorder(radius=8)),
     )
     btn_calc = ft.ElevatedButton(
         content=ft.Text("Calcular Exportação"),
-        style=ft.ButtonStyle(
-            bgcolor=ACCENT,            
-            color="#FFFFFF",
-            shape=ft.RoundedRectangleBorder(radius=8)
-        ),
+        style=ft.ButtonStyle(bgcolor=ACCENT, color="#FFFFFF", shape=ft.RoundedRectangleBorder(radius=8)),
         visible=False,
     )
 
     btn_limpar = ft.OutlinedButton(
         content=ft.Text("Limpar Campos"),
-        style=ft.ButtonStyle(
-            color=ERROR_CLR,
-            side=ft.BorderSide(1.5, ERROR_CLR),
-            shape=ft.RoundedRectangleBorder(radius=8)
-        ),
+        style=ft.ButtonStyle(color=ERROR_CLR, side=ft.BorderSide(1.5, ERROR_CLR), shape=ft.RoundedRectangleBorder(radius=8)),
     )
 
     def limpar_campos(e):
         idx = tela_atual["idx"]
-        
         if idx == 0:
-            f_produto.value = ""
-            f_ncm.value = ""
-            f_preco.value = ""
-            f_cambio.value = ""
-            f_aliquota.value = ""
-            f_lucro_int.value = ""
-            f_credito.value = ""
-            
+            f_produto.value, f_ncm.value, f_preco.value, f_cambio.value, f_aliquota.value, f_lucro_int.value, f_credito.value = "", "", "", "", "", "", ""
         elif idx == 1:
-            f_embal_int.value = ""
-            f_embal_exp.value = ""
-            f_custo_exp.value = ""
-            f_lucro_exp.value = ""
-            f_outros.value = ""
-            f_frete_intl.value = ""
-            f_seguro_intl.value = ""
+            f_embal_int.value, f_embal_exp.value, f_custo_exp.value, f_lucro_exp.value, f_outros.value, f_frete_intl.value, f_seguro_intl.value = "", "", "", "", "", "", ""
             selecionar_incoterm("FOB – Free On Board")
 
         ja_calculou["sim"] = False
         area_resultado.controls.clear()
         msg_erro.value = ""
-
         page.update()
 
     btn_limpar.on_click = limpar_campos
@@ -465,17 +316,14 @@ def main(page: ft.Page):
         btn_calc.visible   = idx == 1
         btn_prox.visible   = idx == 0
         btn_limpar.visible = idx < 2 
-        
         page.update()
 
     def ir_prox(e):
-        if tela_atual["idx"] < len(ETAPAS) - 1:
-            tela_atual["idx"] += 1
+        if tela_atual["idx"] < len(ETAPAS) - 1: tela_atual["idx"] += 1
         atualizar()
 
     def ir_ant(e):
-        if tela_atual["idx"] > 0:
-            tela_atual["idx"] -= 1
+        if tela_atual["idx"] > 0: tela_atual["idx"] -= 1
         atualizar()
 
     def fazer_calculo(e):
@@ -490,17 +338,13 @@ def main(page: ft.Page):
     # ── Header ────────────────────────────────────────────────────────────────
     header = ft.Container(
         content=ft.Row([
-            ft.Container(
-                content=ft.Icon(ft.Icons.IMPORT_EXPORT_ROUNDED, color="#FFFFFF", size=22),
-                bgcolor=ACCENT, border_radius=10, padding=8,
-            ),
+            ft.Container(content=ft.Icon(ft.Icons.IMPORT_EXPORT_ROUNDED, color="#FFFFFF", size=22), bgcolor=ACCENT, border_radius=10, padding=8),
             ft.Column([
-                ft.Text("App Comex", size=19, weight=ft.FontWeight.W_800, color="#FFFFFF"),
+                ft.Text("", size=19, weight=ft.FontWeight.W_800, color="#FFFFFF"),
                 ft.Text("Simulador de Preço de Exportação", size=11, color="#90AAC4"),
             ], spacing=0, expand=True),
         ], spacing=14),
-        bgcolor=PRIMARY,
-        padding=ft.Padding(left=28, right=28, top=16, bottom=16),
+        bgcolor=PRIMARY, padding=ft.Padding(left=28, right=28, top=16, bottom=16),
     )
 
     page.add(
@@ -512,12 +356,10 @@ def main(page: ft.Page):
                 conteudo,
                 ft.Row([btn_ant, btn_limpar, ft.Container(expand=True), btn_calc, btn_prox], spacing=10),
             ], spacing=14),
-            padding=ft.Padding(left=24, right=24, top=18, bottom=24),
-            expand=True,
+            padding=ft.Padding(left=24, right=24, top=18, bottom=24), expand=True,
         ),
     )
     atualizar()
-
 
 if __name__ == "__main__":
     ft.app(target=main)
